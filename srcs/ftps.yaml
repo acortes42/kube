@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: ftps
+    annotations:
+        metallb.universe.tf/allow-shared-ip: share
+spec:
+    ports:
+        - port: 21
+          name: ftps
+          nodePort: 21
+    selector:
+        app: ftps
+    type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: ftps
+spec:
+    selector:
+        matchLabels:
+            app: ftps
+    replicas: 1
+    template:
+        metadata:
+            labels:
+                app: ftps
+        spec:
+            hostname: ftps
+            containers:
+                - name: ftps
+                  image: ftps-service
+                  command: [ "/bin/bash", "-c", "--" ]
+                  args: 
+                    - /etc/init.d/vsftpd start;
+                      /usr/bin/telegraf;
+                      while true; do sleep 30; done;
+                  imagePullPolicy: Never
+                  ports:
+                      - containerPort: 21
