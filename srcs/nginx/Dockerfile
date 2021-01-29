@@ -1,39 +1,34 @@
-FROM alpine
+FROM alpine:latest
 
 # UPDATE
 RUN apk update
 
 # INSTALLATIONS
 RUN apk add nginx
-RUN apk add wget
-RUN apk add php7 php7-fpm
+RUN apk add openssl
 
 #NGINX
 
-COPY srcs/nginx.conf etc/nginx/sites-available/
-RUN  ln -s /etc/nginx/sites-available/nginx.conf etc/nginx/sites-enabled/
+RUN rm /etc/nginx/nginx.conf
+COPY srcs/nginx.conf etc/nginx/nginx.conf
 
 #SSL
 
-RUN mkdir ~/mkcert && \
-  cd ~/mkcert && \
-  wget https://github.com/FiloSottile/mkcert/releases/download/v1.1.2/mkcert-v1.1.2-linux-amd64 && \
-  mv mkcert-v1.1.2-linux-amd64 mkcert && \
-  chmod +x mkcert && \
-./mkcert -install && \
-./mkcert localhost
+RUN mkdir -p /ssl/
+RUN openssl req -x509 -nodes -newkey rsa:2048 -keyout /ssl/cert.key -out /ssl/cert.crt -days 365 -subj '/CN=localhost'
 
 #Telegraph
 
-RUN wget https://dl.influxdata.com/telegraf/releases/telegraf-1.14.0-static_linux_amd64.tar.gz \
-&& tar -xzf telegraf-1.14.0-static_linux_amd64.tar.gz \
-&& chmod +x telegraf/telegraf \
-&& cp telegraf/telegraf /usr/bin/ \
-&& cp telegraf/telegraf.conf /etc/
+#RUN wget https://dl.influxdata.com/telegraf/releases/telegraf-1.14.0-static_linux_amd64.tar.gz \
+#&& tar -xzf telegraf-1.14.0-static_linux_amd64.tar.gz \
+#&& chmod +x telegraf/telegraf \
+#&& cp telegraf/telegraf /usr/bin/ \
+#&& cp telegraf/telegraf.conf /etc/
 
 #START
+COPY srcs/setup.sh .
+RUN chmod +x setup.sh
 
 EXPOSE 80 443
 
-CMD ["/bin/bash"]
-
+CMD ./setup.sh

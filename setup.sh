@@ -1,3 +1,4 @@
+
 minikube start  --vm-driver virtualbox  --disk-size 20000 --extra-config=apiserver.service-node-port-range=20-32767
 MINIKUBE_IP=`minikube ip`
 
