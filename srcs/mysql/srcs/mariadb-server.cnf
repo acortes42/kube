@@ -1,0 +1,19 @@
+[client-server] 
+port = 3306
+socket=/run/mysqld/mysql.sock
+
+[mysqld]
+user = root
+datadir = /var/lib/mysql
+log-bin = /var/lib/mysql/mysql-bin
+bind-address = 0.0.0.0
+wait_timeout = 300
+max_connect_errors = 30
+
+#  Encryption algorithm to use for table encryption
+
+encryption_algorithm = aes_ctr
+
+# The server does not listen for TCP/IP connections 
+
+# skip_networking = 1

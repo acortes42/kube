@@ -3,40 +3,61 @@ kind: Service
 metadata:
     name: ftps
     annotations:
-        metallb.universe.tf/allow-shared-ip: share
+        metallb.universe.tf/allow-shared-ip: sharing_key
 spec:
-    ports:
-        - port: 21
-          name: ftps
-          nodePort: 21
-    selector:
-        app: ftps
-    type: LoadBalancer
+  type: LoadBalancer
+  selector:
+    app: ftps-app
+  ports:
+  - port: 20
+    name: active-data-port
+    targetPort: 20
+  - port: 21
+    name: control-port
+    targetPort: 21
+  - port: 10000
+    name: pasive-data-port1
+    targetPort: 10000
+  - port: 10001
+    name: pasive-data-port2
+    targetPort: 10001
+  - port: 10002
+    name: pasive-data-port3
+    targetPort: 10002
+  - port: 10003
+    name: pasive-data-port4
+    targetPort: 10003
+  - port: 10004
+    name: pasive-data-port5
+    targetPort: 10004
+  - port: 10005
+    name: pasive-data-port6
+    targetPort: 10005
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: ftps
+  name: ftps-deploy
 spec:
-    selector:
-        matchLabels:
-            app: ftps
-    replicas: 1
-    template:
-        metadata:
-            labels:
-                app: ftps
-        spec:
-            hostname: ftps
-            containers:
-                - name: ftps
-                  image: ftps-service
-                  command: [ "/bin/bash", "-c", "--" ]
-                  args: 
-                    - /etc/init.d/vsftpd start;
-                      /usr/bin/telegraf;
-                      while true; do sleep 30; done;
-                  imagePullPolicy: Never
-                  ports:
-                      - containerPort: 21
-                      
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ftps-app
+  template:
+    metadata:
+      labels:
+        app: ftps-app
+    spec:
+      containers:
+      - name: ftps
+        image: image_ftps:lastest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 20
+        - containerPort: 21
+        - containerPort: 10000
+        - containerPort: 10001
+        - containerPort: 10002
+        - containerPort: 10003
+        - containerPort: 10004
+        - containerPort: 10005

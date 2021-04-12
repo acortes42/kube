@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-    name: nginx
+    name: nginx-svc
     annotations:
-        metallb.universe.tf/allow-shared-ip: share
+        metallb.universe.tf/allow-shared-ip: sharing_key
 spec:
     ports:
         - port: 80
@@ -12,17 +12,15 @@ spec:
         - port: 443
           name: https
           nodePort: 443
-        - port: 22
-          name: ssh
-          nodePort: 22
     selector:
         app: nginx
     type: LoadBalancer
+    loadBalancerIP: 172.17.0.2
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: nginx
+    name: nginx-deploy
 spec:
     selector:
         matchLabels:
@@ -36,17 +34,9 @@ spec:
             hostname: nginx
             containers:
                 - name: nginx
-                  image: nginx-service
-                  command: [ "/bin/bash", "-c", "--" ]
-                  args: 
-                    - /etc/init.d/nginx start;
-                      /etc/init.d/php-fpm7 start;
-                      /etc/init.d/sshd start;
-                      /usr/bin/telegraf;
-                      while true; do sleep 10; done;
+                  image: nginx-svc
                   imagePullPolicy: Never
                   ports:
                   - containerPort: 80
                   - containerPort: 443
-                  - containerPort: 22
                   

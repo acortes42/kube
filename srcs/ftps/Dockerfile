@@ -1,21 +1,36 @@
-FROM alpine
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Dockerfile                                         :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: acortes- <acortes-@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2021/04/12 17:20:13 by acortes-          #+#    #+#              #
+#    Updated: 2021/04/12 19:59:13 by acortes-         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-RUN apk update
-RUN apk add vsftpd
-RUN apk add openssl
+FROM alpine:3.12
 
-COPY ./srcs/vsftpd.conf /etc/vsftpd/vsftpd.conf
-RUN mkdir -p /etc/ssl/private/
-RUN openssl req -x509 -days 3560 -newkey rsa:4096 -nodes -keyout /etc/ssl/private/vsftpd.pem -out /etc/ssl/private/vsftpd.pem -subj  "/C=/ST=/L=/O=/OU=/CN="
+RUN apk update && apk upgrade \
+	&& apk add vsftpd \
+	&& apk add openrc \
+	&& apk add openssl \
+	&& apk add --no-cache procps
 
-#Telegraph
+# telegraf
 
-RUN wget https://dl.influxdata.com/telegraf/releases/telegraf-1.14.0-static_linux_amd64.tar.gz \
-&& tar -xzf telegraf-1.14.0-static_linux_amd64.tar.gz \
-&& chmod +x telegraf/telegraf \
-&& cp telegraf/telegraf /usr/bin/ \
-&& cp telegraf/telegraf.conf /etc/
+RUN cd sbin/ \
+	&& wget https://dl.influxdata.com/telegraf/releases/telegraf-1.17.3_linux_i386.tar.gz \
+	&& tar xf telegraf-1.17.3_linux_i386.tar.gz \
+	&& rm telegraf-1.17.3_linux_i386.tar.gz \
+	&& mv telegraf-1.17.3 telegraf
 
-EXPOSE 21
+COPY srcs/vsftpd.conf /etc/vsftpd/vsftpd.conf
+COPY srcs/init.sh /sbin/
+COPY srcs/wait_kube.sh /sbin/
+RUN chmod +x /sbin/init.sh
+RUN chmod +x /sbin/wait_kube.sh
+EXPOSE 20 21 10000-10005
 
-CMD ["/bin/bash"]
+ENTRYPOINT ["/sbin/init.sh"]

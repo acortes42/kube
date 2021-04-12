@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wp-svc
+  annotations:
+    metallb.universe.tf/allow-shared-ip: sharing_key
+  labels:
+    app: wp
+spec:
+  selector:
+    app: wp-pod
+  type: LoadBalancer
+  loadBalancerIP: 172.17.0.2
+  ports:
+  - port: 5050
+    name: wp-port
+    targetPort: wp-container
+    protocol: TCP
+    nodePort: 5050
+
+--- 
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wp
+  labels:
+    app: wp-deploy
+spec:
+  selector:
+    matchLabels:
+      app: wp-pod
+  template:
+    metadata:
+      labels:
+        app: wp-pod
+    spec:
+      containers:
+      - name: wp
+        image: wp_image
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5050
+          name: wp-container

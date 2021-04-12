@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+
+kind: Service
+metadata:
+  name: telegraf-svc 
+  labels:
+    app: telegraf
+spec:
+  selector:
+    app: telegraf
+  ports:
+  - port: 8125
+    targetPort: 8125
+
+---
+
+kind: Deployment
+metadata:
+    name: telegraf-deploy
+spec:
+    selector:
+        matchLabels:
+            app: telegraf
+    replicas: 1
+    template:
+        metadata:
+            labels:
+                app: telegraf
+        spec:
+            hostname: telegraf
+            containers:
+                - name: telegraf
+                  image: image_telegraf:lastest
+                  imagePullPolicy: Never
+            ports:
+                - containerPort: 8125
+     

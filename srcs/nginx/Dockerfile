@@ -1,11 +1,32 @@
-FROM alpine:latest
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Dockerfile                                         :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: acortes- <acortes-@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2021/04/12 17:19:46 by acortes-          #+#    #+#              #
+#    Updated: 2021/04/12 20:26:24 by acortes-         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+FROM alpine:3.12
 
 # UPDATE
 RUN apk update
 
 # INSTALLATIONS
 RUN apk add nginx
-RUN apk add openssl
+RUN apk add openssl && apk add openrc --no-cache
+RUN mkdir -p /var/www/html
+
+#TELEGRAF
+
+RUN cd sbin/ \
+	&& wget https://dl.influxdata.com/telegraf/releases/telegraf-1.17.3_linux_i386.tar.gz \
+	&& tar xf telegraf-1.17.3_linux_i386.tar.gz \
+	&& rm telegraf-1.17.3_linux_i386.tar.gz \
+	&& mv telegraf-1.17.3 telegraf
 
 #NGINX
 
@@ -17,18 +38,10 @@ COPY srcs/nginx.conf etc/nginx/nginx.conf
 RUN mkdir -p /ssl/
 RUN openssl req -x509 -nodes -newkey rsa:2048 -keyout /ssl/cert.key -out /ssl/cert.crt -days 365 -subj '/CN=localhost'
 
-#Telegraph
-
-#RUN wget https://dl.influxdata.com/telegraf/releases/telegraf-1.14.0-static_linux_amd64.tar.gz \
-#&& tar -xzf telegraf-1.14.0-static_linux_amd64.tar.gz \
-#&& chmod +x telegraf/telegraf \
-#&& cp telegraf/telegraf /usr/bin/ \
-#&& cp telegraf/telegraf.conf /etc/
-
 #START
-COPY srcs/setup.sh .
-RUN chmod +x setup.sh
+COPY srcs/setup.sh /usr/sbin/
+COPY srcs/index.html /var/www/html
+RUN chmod 777 /usr/sbin/setup.sh
 
-EXPOSE 80 443
+ENTRYPOINT ["sh", "/usr/sbin/setup.sh"]
 
-CMD ./setup.sh
