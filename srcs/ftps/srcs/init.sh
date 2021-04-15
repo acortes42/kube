@@ -2,24 +2,12 @@
 
 cd /sbin/telegraf/usr/bin
 ./telegraf -sample-config -input-filter cpu:mem:disk -output-filter influxdb > telegraf.conf
-sed -i '112s/.*/  urls = ["http:\/\/influxdb-svc:8086"]/' telegraf.conf
+sed -i '112s/.*/  urls = 192.168.99.240:8086' telegraf.conf
 sed -i '116s/.*/  database = "ftps"/' telegraf.conf
 
 sleep 10
 
-rc-status -a
-touch /run/openrc/softlevel
-
-# ftp config
-
-adduser --disabled-password --gecos "" admin \
-&& mkdir /home/admin/ftp \
-&& chown nobody:nogroup /home/admin/ftp \
-&& chmod a-w /home/admin/ftp \
-&& mkdir /home/admin/ftp/files \
-&& chown admin:admin /home/admin/ftp/files
-
-echo -e "$PASS_ADMIN\n$PASS_ADMIN" | passwd admin
+echo -e "Anon123.!\nAnon123.!" | passwd admin
 
 #create ssl keys
 

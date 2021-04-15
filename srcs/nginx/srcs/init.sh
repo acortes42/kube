@@ -3,7 +3,7 @@
 # Sed -i to insert a line before the chosen line
 cd /sbin/telegraf/usr/bin
 ./telegraf -sample-config -input-filter cpu:mem:disk -output-filter influxdb > telegraf.conf
-sed -i '112s/.*/  urls = ["http:\/\/influxdb-svc:8086"]/' telegraf.conf
+sed -i '112s/.*/  urls = 192.168.99.240:8086' telegraf.conf
 sed -i '116s/.*/  database = "nginx"/' telegraf.conf
 
 sleep 20
@@ -25,17 +25,7 @@ rc-service nginx start
 status=$?
 if [ $status -ne 0 ];
 then
-	echo "Failed to start nginx of wordpress: $status"
-	exit $status
-fi
-
-# Start php-fpm and check if correct
-
-rc-service php-fpm7 start
-status=$?
-if [ $status -ne 0 ];
-then
-	echo "Failed to start php of wordpress: $status"
+	echo "Failed to start nginx: $status"
 	exit $status
 fi
 
@@ -43,4 +33,4 @@ fi
 
 cd /sbin/telegraf/usr/bin
 ./telegraf --config telegraf.conf &
-sh /sbin/wait_kube.sh nginx telegraf
+sh /usr/sbin/wait_kube.sh nginx telegraf

@@ -30,7 +30,7 @@ spec:
             hostname: telegraf
             containers:
                 - name: telegraf
-                  image: image_telegraf:lastest
+                  image: telegraf
                   imagePullPolicy: Never
             ports:
                 - containerPort: 8125

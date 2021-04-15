@@ -6,13 +6,13 @@
 #    By: acortes- <acortes-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/12 17:22:12 by acortes-          #+#    #+#              #
-#    Updated: 2021/04/12 17:22:13 by acortes-         ###   ########.fr        #
+#    Updated: 2021/04/13 17:49:42 by acortes-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 FROM alpine:3.12
 
-RUN apk update && apk add wget
+RUN apk update && apk add wget && apk add openrc --no-cache
 RUN apk add php7 php7-fpm php7-opcache php7-gd php7-mysqli \
     php7-zlib php7-curl php7-mbstring php7-json php7-session php-common \
     php-cli php-mbstring php-bz2 php-phar

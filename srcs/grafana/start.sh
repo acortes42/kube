@@ -1,4 +1,7 @@
-echo "\n\033[1;95m Docker build: Grafana: \033[m \n"
-docker build /Users/acortes-/Desktop/kube/srcs/grafana -t grafana
+#!/bin/sh
 
-#docker run -d --rm -p 80:80 -p 443:443 --name grafana grafana
+echo "\n\033[1;95m Docker build: Grafana: \033[m \n"
+docker build . -t grafana
+
+#docker run -d --rm -p 3000:3000 --name grafana grafana
+

@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
       - name: influxdb
-        image: image_influxdb:lastest
+        image: influxdb
         imagePullPolicy: Never
         ports:
         - containerPort: 8086

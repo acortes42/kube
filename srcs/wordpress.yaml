@@ -10,7 +10,7 @@ spec:
   selector:
     app: wp-pod
   type: LoadBalancer
-  loadBalancerIP: 172.17.0.2
+  loadBalancerIP: 192.168.99.240
   ports:
   - port: 5050
     name: wp-port
@@ -23,7 +23,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: wp
+  name: wordpress
   labels:
     app: wp-deploy
 spec:
@@ -36,8 +36,8 @@ spec:
         app: wp-pod
     spec:
       containers:
-      - name: wp
-        image: wp_image
+      - name: wordpress
+        image: wordpress
         imagePullPolicy: Never
         ports:
         - containerPort: 5050

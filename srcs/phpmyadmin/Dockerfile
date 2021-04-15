@@ -6,18 +6,22 @@
 #    By: acortes- <acortes-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/12 17:19:40 by acortes-          #+#    #+#              #
-#    Updated: 2021/04/12 18:19:51 by acortes-         ###   ########.fr        #
+#    Updated: 2021/04/13 20:32:15 by acortes-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 FROM alpine:3.12
 
-RUN apk update
-RUN apk add wget mysql-client nginx ; mkdir -p /run/nginx
-RUN apk add openrc --no-cache
+RUN apk update \
+	&& apk add wget \
+	&& apk add nginx && mkdir -p /run/nginx \
+	&& apk add mysql \
+	&& apk add mysql-client
+RUN apk add openssl && apk add openrc --no-cache
 RUN apk add php7 php7-fpm php7-opcache php7-gd php7-mysqli php7-zlib php7-mbstring php7-json php7-session
-RUN apk add --no-cache git make musl-dev go ; apk add --no-cache procps
+RUN apk add --no-cache procps
 
+RUN mkdir -p /run/nginx
 RUN mkdir -p /var/lib/nginx/www/ \
 	&& cd /var/lib/nginx/www/ \
 	&& wget http://files.directadmin.com/services/all/phpMyAdmin/phpMyAdmin-5.0.2-all-languages.tar.gz \
@@ -27,11 +31,12 @@ RUN mkdir -p /var/lib/nginx/www/ \
 	&& adduser -D -g 'www' www \
 	&& chown -R www:www /var/lib/nginx
 
-RUN cd /tmp && wget https://github.com/FiloSottile/mkcert/archive/v1.0.0.tar.gz && tar xzvf /tmp/v1.0.0.tar.gz \
-	&& cd /tmp/mkcert-1.0.0 && make \
-	&& cd /tmp/mkcert-1.0.0/bin && chmod +x mkcert \
-	&& cd /tmp/mkcert-1.0.0/bin && cp mkcert /usr/bin/ \
-	&& cd /tmp/ && mkcert -install && mkcert localhost
+#SSL
+
+RUN mkdir -p /ssl/
+RUN openssl req -x509 -nodes -newkey rsa:2048 -keyout /ssl/localhost.key -out /ssl/localhost.crt -days 365 -subj '/CN=localhost'
+
+#INFLUX
 
 RUN cd sbin/ \
 	&& wget https://dl.influxdata.com/telegraf/releases/telegraf-1.17.3_linux_i386.tar.gz \

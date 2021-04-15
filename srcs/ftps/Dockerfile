@@ -6,7 +6,7 @@
 #    By: acortes- <acortes-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/12 17:20:13 by acortes-          #+#    #+#              #
-#    Updated: 2021/04/12 19:59:13 by acortes-         ###   ########.fr        #
+#    Updated: 2021/04/14 12:29:06 by acortes-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,16 +15,25 @@ FROM alpine:3.12
 RUN apk update && apk upgrade \
 	&& apk add vsftpd \
 	&& apk add openrc \
-	&& apk add openssl \
-	&& apk add --no-cache procps
-
+	&& apk add openssl
 # telegraf
+RUN rc-status -a ; touch /run/openrc/softlevel
+
+# ftp config
+
+RUN adduser --disabled-password --gecos "" admin \
+	&& mkdir /home/admin/ftp \
+	&& chown nobody:nogroup /home/admin/ftp \
+	&& chmod a-w /home/admin/ftp \
+	&& mkdir /home/admin/ftp/files \
+	&& chown admin:admin /home/admin/ftp/files
 
 RUN cd sbin/ \
 	&& wget https://dl.influxdata.com/telegraf/releases/telegraf-1.17.3_linux_i386.tar.gz \
 	&& tar xf telegraf-1.17.3_linux_i386.tar.gz \
 	&& rm telegraf-1.17.3_linux_i386.tar.gz \
-	&& mv telegraf-1.17.3 telegraf
+	&& mv telegraf-1.17.3 telegraf \
+	&& apk add --no-cache procps
 
 COPY srcs/vsftpd.conf /etc/vsftpd/vsftpd.conf
 COPY srcs/init.sh /sbin/
