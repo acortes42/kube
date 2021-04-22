@@ -6,7 +6,7 @@
 #    By: acortes- <acortes-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/12 17:19:40 by acortes-          #+#    #+#              #
-#    Updated: 2021/04/13 20:32:15 by acortes-         ###   ########.fr        #
+#    Updated: 2021/04/19 21:16:06 by acortes-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,7 +45,7 @@ RUN cd sbin/ \
 	&& mv telegraf-1.17.3 telegraf
 
 COPY srcs/default.conf /etc/nginx/conf.d/default.conf
-COPY srcs/phpmyadmin.inc.php /var/lib/nginx/www//phpmyadmin
+COPY srcs/config.inc.php /var/lib/nginx/www//phpmyadmin
 COPY srcs/init_myadmin.sh /sbin/
 COPY srcs/wait_kube.sh /sbin/
 RUN chmod +x /sbin/init_myadmin.sh

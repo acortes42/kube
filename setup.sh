@@ -6,7 +6,7 @@
 #    By: acortes- <acortes-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/13 14:21:10 by acortes-          #+#    #+#              #
-#    Updated: 2021/04/14 12:35:08 by acortes-         ###   ########.fr        #
+#    Updated: 2021/04/22 19:08:50 by acortes-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,16 +24,15 @@ image_failture()
 
 service_deployment()
 {
-	kubectl apply -f ./srcs/mysql-pvc.yaml
-	kubectl apply -f ./srcs/mysql.yaml
-	kubectl apply -f ./srcs/wordpress.yaml
-	kubectl apply -f ./srcs/phpmyadmin.yaml
-	kubectl apply -f ./srcs/ftps.yaml
-	kubectl apply -f ./srcs/influxdb-pvc.yaml
-	kubectl apply -f ./srcs/influxdb.yaml
-	kubectl apply -f ./srcs/grafana.yaml
-	kubectl apply -f ./srcs/nginx.yaml
-	kubectl apply -f ./srcs/telegraf.yaml
+	kubectl apply -f ./srcs/mysql-pvc.yaml 1>/dev/null
+	kubectl apply -f ./srcs/mysql.yaml 1>/dev/null
+	kubectl apply -f ./srcs/wordpress.yaml 1>/dev/null
+	kubectl apply -f ./srcs/phpmyadmin.yaml 1>/dev/null
+	kubectl apply -f ./srcs/ftps.yaml 1>/dev/null
+	kubectl apply -f ./srcs/influxdb-pvc.yaml 1>/dev/null
+	kubectl apply -f ./srcs/influxdb.yaml 1>/dev/null
+	kubectl apply -f ./srcs/grafana.yaml 1>/dev/null
+	kubectl apply -f ./srcs/nginx.yaml 1>/dev/null
 }
 
 build_metallb()
@@ -65,7 +64,7 @@ docker_build()
 
 	# phpmyadmin
 
-	docker build ./srcs/phpmyadmin/ -t image_phpmyadmin:lastest
+	docker build ./srcs/phpmyadmin/ -t phpmyadmin
 	#image_failture "$?", "phpmyadmin"
 
 	# influxdb
@@ -89,12 +88,6 @@ docker_build()
 	#image_failture "$?", "ftps"
 
 	#echo "\n\033[1;95m Este es error_check: $Error_check \033[m \n"
-
-	if [ $Error_check != 0 ]
-	then
-		echo "\n\033[1;95m Error building the images from Dockerfiles \033[m \n"
-		exit 1
-	fi
 }
 
 #
@@ -106,7 +99,7 @@ docker_build()
 
 export MINIKUBE_HOME=~/goinfre
 echo "\n\033[1;95m Iniciando minikube: \033[m \n"
-minikube start  --vm-driver virtualbox  --disk-size 20000 --extra-config=apiserver.service-node-port-range=20-32767 --addons dashboard
+minikube start  --vm-driver virtualbox  --disk-size 20000 --addons dashboard
 MINIKUBE_IP=`minikube ip`
 
 # Instalación de Metallb de la página oficial

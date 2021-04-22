@@ -7,5 +7,3 @@ user = root
 datadir = /var/lib/mysql
 log-bin = /var/lib/mysql/mysql-bin
 bind-address = 0.0.0.0
-wait_timeout = 300
-max_connect_errors = 30

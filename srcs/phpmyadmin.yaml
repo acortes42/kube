@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: phpmyadmin
-        image: image_phpmyadmin:lastest
+        image: phpmyadmin
         imagePullPolicy: Never
         ports:
         - containerPort: 5050

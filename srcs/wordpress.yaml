@@ -1,39 +1,32 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: wp-svc
   annotations:
     metallb.universe.tf/allow-shared-ip: sharing_key
-  labels:
-    app: wp
+  name: wordpress-svc
 spec:
   selector:
-    app: wp-pod
+    app: wordpress
   type: LoadBalancer
-  loadBalancerIP: 192.168.99.240
   ports:
   - port: 5050
-    name: wp-port
-    targetPort: wp-container
-    protocol: TCP
-    nodePort: 5050
+    targetPort: 5050
+    name: wordpress
 
---- 
-
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: wordpress
-  labels:
-    app: wp-deploy
+  name: wordpress-deploy
 spec:
   selector:
     matchLabels:
-      app: wp-pod
+      app: wordpress
+  replicas: 1
   template:
     metadata:
       labels:
-        app: wp-pod
+        app: wordpress
     spec:
       containers:
       - name: wordpress
@@ -41,4 +34,4 @@ spec:
         imagePullPolicy: Never
         ports:
         - containerPort: 5050
-          name: wp-container
+

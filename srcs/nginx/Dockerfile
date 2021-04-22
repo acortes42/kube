@@ -6,7 +6,7 @@
 #    By: acortes- <acortes-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/12 17:19:46 by acortes-          #+#    #+#              #
-#    Updated: 2021/04/13 19:45:36 by acortes-         ###   ########.fr        #
+#    Updated: 2021/04/19 17:42:21 by acortes-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,7 @@ RUN openssl req -x509 -nodes -newkey rsa:2048 -keyout /ssl/cert.key -out /ssl/ce
 
 #START
 
-RUN mkdir -p /var/lib/nginx/www/hmtl
+RUN mkdir -p /var/lib/nginx/www/html
 
 COPY srcs/index.html /var/lib/nginx/www/html
 COPY srcs/init.sh /usr/sbin/

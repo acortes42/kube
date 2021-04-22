@@ -6,7 +6,7 @@
 #    By: acortes- <acortes-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/04/12 17:22:12 by acortes-          #+#    #+#              #
-#    Updated: 2021/04/13 17:49:42 by acortes-         ###   ########.fr        #
+#    Updated: 2021/04/20 14:06:17 by acortes-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,7 @@ RUN cd sbin/ \
 
 COPY srcs/init_wp.sh /sbin/
 COPY srcs/setup_wordpress.sh /sbin/
-COPY srcs/nginx_wp.conf /etc/nginx/conf.d/default.conf
+COPY srcs/default.conf /etc/nginx/conf.d
 COPY srcs/wait_kube.sh /sbin/
 RUN chmod +x /sbin/init_wp.sh
 RUN chmod +x /sbin/setup_wordpress.sh
